@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Image Uploader</title>
+    <style>
+        /* Optional: Basic styling for better appearance */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f4f4f9;
+        }
+        .container {
+            padding: 30px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <form action="/upload-image" method="post" enctype="multipart/form-data">
+            
+            <label for="imageUpload">Choose Image File:</label><br><br>
+            
+            <input type="file" id="imageUpload" name="image" accept="image/*" required>
+            
+            <br><br>
+
+            <button type="submit">Upload Image</button>
+
+        </form>
+    </div>
+
+</body>
+</html>
