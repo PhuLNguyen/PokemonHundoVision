@@ -3,7 +3,7 @@ FROM python:3.11-slim
 
 # Set environment variables
 # Set the port the application listens on (as defined in server.py)
-ENV PORT 8080
+ENV PORT=8080
 # Set the working directory in the container
 WORKDIR /app
 
