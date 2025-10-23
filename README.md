@@ -9,3 +9,6 @@ gcloud projects add-iam-policy-binding 612179929220 \
   --role='roles/ml.developer'
 
 gcloud builds submit --config=cloudbuild.yaml
+
+gcloud beta run services add-iam-policy-binding --region=us-central1 --member=allUsers --role=roles/run.invoker image-ocr-service
+
