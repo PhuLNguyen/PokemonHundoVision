@@ -22,7 +22,7 @@ COPY . .
 
 # 6. Expose Port
 # Inform Docker that the container listens on port 3000 at runtime
-EXPOSE 3000
+EXPOSE 8080
 
 # 7. Start Command
 # Define the command to run the application when the container starts

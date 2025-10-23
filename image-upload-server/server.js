@@ -2,7 +2,7 @@ const express = require('express');
 const multer = require('multer');
 const path = require('path'); // Needed for resolving file paths
 const app = express();
-const PORT = 3000;
+const PORT = 8080;
 
 // --- 1. CONFIGURE MULTER STORAGE ---
 const storage = multer.diskStorage({
