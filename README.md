@@ -1,5 +1,7 @@
 # Pokemon Hundo Vision
 
+gcloud config set project <PROJECT_ID>
+gcloud services enable vision.googleapis.com
 
 docker build -t image-uploader .
 docker run -d -p 3000:3000 -v $(pwd)/uploads:/usr/src/app/uploads --name image-upload-app image-uploader
