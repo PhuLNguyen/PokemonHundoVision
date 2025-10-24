@@ -1,6 +1,4 @@
 import os
-import io
-# Import render_template
 from flask import Flask, request, jsonify, render_template
 from google.cloud import vision
 
@@ -8,15 +6,16 @@ from google.cloud import vision
 # Configuration
 # Cloud Run automatically injects the PORT environment variable
 PORT = int(os.environ.get("PORT", 8080))
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
 app = Flask(__name__)
-# The UPLOAD_FOLDER is not needed anymore since we process files in memory
-# -------------------------------------------------------------
 
 # Initialize Google Cloud Vision Client
 vision_client = vision.ImageAnnotatorClient()
 
+#-------------------------------------------------------------
+# Helper Functions
+#-------------------------------------------------------------
 def allowed_file(filename):
     """Checks if a file extension is allowed."""
     return '.' in filename and \
@@ -34,18 +33,15 @@ def detect_text_from_bytes(image_bytes):
         return response.full_text_annotation.text
     return "No text detected."
 
-# -------------------------------------------------------------
-# UPDATED ROUTE: Serve index.html
-# -------------------------------------------------------------
+#-------------------------------------------------------------
+# Routes
+#-------------------------------------------------------------
 @app.route('/', methods=['GET'])
 def home():
     """Serves the index.html file."""
     # Flask automatically looks for index.html in the 'templates' folder
     return render_template('index.html')
 
-# -------------------------------------------------------------
-# Existing /upload route (no changes needed)
-# -------------------------------------------------------------
 @app.route('/upload', methods=['POST'])
 def upload_file():
     if 'image' not in request.files:
@@ -66,7 +62,6 @@ def upload_file():
 
             # Return the detected text as a JSON response
             return jsonify({
-                "message": "File uploaded and processed successfully",
                 "ocr_result": ocr_text
             }), 200
 
@@ -77,5 +72,8 @@ def upload_file():
     else:
         return jsonify({"error": "File type not allowed"}), 400
 
+#-------------------------------------------------------------
+# Main entry point
+#-------------------------------------------------------------
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=PORT)
