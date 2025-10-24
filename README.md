@@ -19,8 +19,18 @@ sudo chmod a+r ./application_default_credentials.json
 ### Build Docker image
 docker build -t ocr-app .
 
-### Run the container
+### Run the container (mount only the ADC file to container)
 docker run -d -p 8080:8080 \
+  --mount type=bind,source="./application_default_credentials.json",target="/root/.config/gcloud/application_default_credentials.json",readonly \
+  -e GOOGLE_APPLICATION_CREDENTIALS="/root/.config/gcloud/application_default_credentials.json" \
+  --name ocr-container \
+  ocr-app
+
+### Run the container (mount the whole source code directory to container)
+docker run -d -p 8080:8080 \
+  --mount type=bind,source="./",target="/app" \
+  -e FLASK_ENV=Development \
+  -e FLASK_DEBUG=True \
   --mount type=bind,source="./application_default_credentials.json",target="/root/.config/gcloud/application_default_credentials.json",readonly \
   -e GOOGLE_APPLICATION_CREDENTIALS="/root/.config/gcloud/application_default_credentials.json" \
   --name ocr-container \
