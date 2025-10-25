@@ -24,7 +24,9 @@ def numpy_to_flask_file(numpy_image_array, file_extension='.jpg'):
 
     # 2. Convert the NumPy array buffer to a standard Python bytes object.
     image_bytes = buffer.tobytes()
+    return image_bytes
 
+    """
     # 3. Wrap the bytes in a BytesIO object (in-memory file).
     image_file_object = io.BytesIO(image_bytes)
     
@@ -32,6 +34,7 @@ def numpy_to_flask_file(numpy_image_array, file_extension='.jpg'):
     image_file_object.seek(0)
     
     return image_file_object
+	"""
 
 def detect_dark_oval_banner(file):
 	# 1. Decode the image bytes into an OpenCV (NumPy) image array

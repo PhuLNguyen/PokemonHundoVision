@@ -56,25 +56,18 @@ def upload_file():
     if file and allowed_file(file.filename):
         try:
             banner_img = detect_dark_oval_banner(file)
-            return send_file(banner_img, mimetype='image/jpeg')
-
-            """
-            # Read the file into memory
-            image_bytes = file.read()
+            #return send_file(banner_img, mimetype='image/jpeg')
 
             # Process the image using OCR
-            ocr_text = detect_text_from_bytes(image_bytes)
+            ocr_text = detect_text_from_bytes(banner_img)
 
             # Return the detected text as a JSON response
             return jsonify({
                 "ocr_result": ocr_text
             }), 200
-            """
-
         except Exception as e:
             print(f"An error occurred: {e}")
             return jsonify({"error": f"Internal server error: {e}"}), 500
-    
     else:
         return jsonify({"error": "File type not allowed"}), 400
 
