@@ -2,3 +2,5 @@ image-upload-server/uploads/*.jpg
 image-upload-server/application_default_credentials.json
 image-upload-server/adcfile/application_default_credentials.json
 image-upload-server/__pycache__/server.cpython-311.pyc
+image-upload-server/__pycache__/preprocessing.cpython-310.pyc
+image-upload-server/*.jpg
