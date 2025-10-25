@@ -1,3 +1,5 @@
 Flask
 google-cloud-vision
 gunicorn  # Recommended for production deployments like Cloud Run
+opencv-python
+numpy

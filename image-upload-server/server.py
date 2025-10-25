@@ -1,6 +1,7 @@
 import os
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, send_file
 from google.cloud import vision
+from preprocessing import detect_dark_oval_banner
 
 # -------------------------------------------------------------
 # Configuration
@@ -54,9 +55,13 @@ def upload_file():
     
     if file and allowed_file(file.filename):
         try:
+            banner_img = detect_dark_oval_banner(file)
+            return send_file(banner_img, mimetype='image/jpeg')
+
+            """
             # Read the file into memory
             image_bytes = file.read()
-            
+
             # Process the image using OCR
             ocr_text = detect_text_from_bytes(image_bytes)
 
@@ -64,6 +69,7 @@ def upload_file():
             return jsonify({
                 "ocr_result": ocr_text
             }), 200
+            """
 
         except Exception as e:
             print(f"An error occurred: {e}")
