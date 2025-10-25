@@ -61,9 +61,11 @@ def upload_file():
             # Process the image using OCR
             ocr_text = detect_text_from_bytes(banner_img)
 
+            print(f"Vision API result: {ocr_text}")
+
             # Return the detected text as a JSON response
             return jsonify({
-                "ocr_result": ocr_text
+                "Vision API result": ocr_text
             }), 200
         except Exception as e:
             print(f"An error occurred: {e}")
