@@ -1,9 +1,5 @@
 # Pokemon Hundo Vision
 
-sudo apt update && sudo apt upgrade -y
-sudo apt install python3 python3-pip
-pip3 install requests beautifulsoup4 pandas selenium selenium-stealth
-
 ## Google Cloud Setup
 gcloud config set project [PROJECT_ID]
 gcloud services enable vision.googleapis.com
