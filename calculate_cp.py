@@ -15,7 +15,7 @@ def load_cpm_table():
     except json.JSONDecodeError:
         print("Error: Could not decode JSON. Check the file format.")
 
-def calculate_hundo_cp_dict(pokemon_go_base_stat, IV=15):
+def calculate_hundo_cp_dict(pokemon_go_base_stat, IV, CPM_TABLE):
     """
     Calculates the Combat Power (CP) of a Pokémon.
 
@@ -28,7 +28,6 @@ def calculate_hundo_cp_dict(pokemon_go_base_stat, IV=15):
     """
     MIN_LEVEL = 1
     MAX_LEVEL = 30
-    CPM_TABLE = load_cpm_table()
     HUNDO_CP_DICT = {}
 
     for level in range(MIN_LEVEL, MAX_LEVEL + 1):
