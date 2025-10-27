@@ -6,6 +6,8 @@ gcloud services enable vision.googleapis.com
 
 
 ## Run Locally
+docker compose up --build -d
+docker compose down --volumes
 
 ### Set Up Local Credentials for the Vision API
 gcloud auth application-default login

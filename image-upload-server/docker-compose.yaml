@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  # 1. The Python Web Application Container
+  app-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080" 
+    restart: always
+    environment:
+      # Ensure your server.py uses the correct URI for the 'mongodb' service
+      - MONGO_URI=mongodb://mongodb:27017/pogo
+    depends_on:
+      - mongodb
+
+  # 2. The MongoDB Database Container
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    # Volume mapping for initialization scripts
+    # Files in './mongo-init/' (e.g., .js or .sh) will be executed on first run.
+    volumes:
+      - mongo_data:/data/db
+      - ./mongo-init:/docker-entrypoint-initdb.d 
+    restart: always
+
+# Define the volume to persist MongoDB data
+volumes:
+  mongo_data:
