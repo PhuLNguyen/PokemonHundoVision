@@ -2,6 +2,7 @@ import os
 from flask import Flask, request, jsonify, render_template, send_file
 from google.cloud import vision
 from preprocessing import detect_dark_oval_banner
+from postprocessing import extract_cp_and_name
 
 # -------------------------------------------------------------
 # Configuration
@@ -56,6 +57,9 @@ def upload_file():
     if file and allowed_file(file.filename):
         try:
             banner_img = detect_dark_oval_banner(file)
+
+            # uncomment line below to send image to server
+            # also must uncomment block in preprocessing.py
             #return send_file(banner_img, mimetype='image/jpeg')
 
             # Process the image using OCR
@@ -63,10 +67,20 @@ def upload_file():
 
             print(f"Vision API result: {ocr_text}")
 
-            # Return the detected text as a JSON response
-            return jsonify({
-                "Vision API result": ocr_text
-            }), 200
+            name, cp = extract_cp_and_name(ocr_text)
+
+            if name and cp:
+                # Return the detected text as a JSON response
+                return jsonify({
+                    "Vision API result": ocr_text,
+                    "Extracted Pokémon Name": name,
+                    "Extracted Combat Power (CP)": cp
+                }), 200
+            else:
+                return jsonify({
+                    "Vision API result": ocr_text,
+                    "error": "Could not extract Pokémon name and CP from the image."
+                }), 422
         except Exception as e:
             print(f"An error occurred: {e}")
             return jsonify({"error": f"Internal server error: {e}"}), 500
