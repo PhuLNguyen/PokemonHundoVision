@@ -42,14 +42,3 @@ def extract_cp_and_name(ocr_result):
     
     # Return failure if the pattern wasn't found
     return None, None
-
-# --- Run Step 2 Test ---
-ocr_result = "e Dialga CP2337"
-name, cp = extract_cp_and_name(ocr_result)
-
-print("--- Data Extraction Results ---")
-print(f"Original OCR: '{ocr_result}'")
-print(f"Extracted Pokémon Name: '{name}'")
-# Ensure the CP is treated as a number
-print(f"Extracted Combat Power (CP): {cp} (Type: {type(cp).__name__})") 
-print("-------------------------------")
