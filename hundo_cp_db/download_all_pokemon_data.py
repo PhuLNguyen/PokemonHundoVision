@@ -24,7 +24,7 @@ def call(api_url):
 
 if __name__ == "__main__":
     input_pokemon_file = 'pokemon_list.json'
-    output_file = '1025_pokemon_go.jsonl'
+    output_file = '1025_pokemon_main.jsonl'
 
     try:
         with open(input_pokemon_file, 'r') as file:
