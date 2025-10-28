@@ -114,7 +114,7 @@ def upload_file():
             if name and cp:
                 # Find the pokemon in the database along with its hundo data
                 pokemon_hundo_data = client.pogo.hundodata.find_one(
-                    {"Name": name}
+                    {"name": name}
                 )
 
                 # Find the level corresponding to the extracted CP
