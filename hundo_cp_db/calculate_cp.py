@@ -27,7 +27,7 @@ def calculate_hundo_cp_dict(pokemon_go_base_stat, IV, CPM_TABLE):
         dict: Max CP per level.
     """
     MIN_LEVEL = 1
-    MAX_LEVEL = 30
+    MAX_LEVEL = 50
     HUNDO_CP_DICT = {}
 
     for level in range(MIN_LEVEL, MAX_LEVEL + 1):
