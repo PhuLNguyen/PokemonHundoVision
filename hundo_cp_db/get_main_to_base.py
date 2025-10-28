@@ -1,24 +1,29 @@
 import requests
 import math # Only needed if you plan to plug these into the Base Stat calculation function
 
-def extract_main_series_stats(api_url):
+def extract_main_series_stats(api_url_or_pokemon_data):
     """
     Fetches a Pokémon's main series base stats from the PokeAPI.
 
     Args:
-        api_url (str): The URL for the Pokémon's data endpoint (e.g., https://pokeapi.co/api/v2/pokemon/blissey).
+        api_url_or_pokemon_data (str or json): 
+            str: The URL for the Pokémon's data endpoint (e.g., https://pokeapi.co/api/v2/pokemon/blissey).
+            json: The Pokémon data already fetched from the API.
 
     Returns:
         dict: A dictionary containing the six main series base stats, or None on failure.
     """
-    try:
-        response = requests.get(api_url)
-        response.raise_for_status() # Raise an HTTPError for bad responses (4xx or 5xx)
-    except requests.exceptions.RequestException as e:
-        print(f"Error fetching data from API: {e}")
-        return None
 
-    data = response.json()
+    if isinstance(api_url_or_pokemon_data, dict):
+        data = api_url_or_pokemon_data
+    else:
+        try:
+            response = requests.get(api_url_or_pokemon_data)
+            response.raise_for_status() # Raise an HTTPError for bad responses (4xx or 5xx)
+        except requests.exceptions.RequestException as e:
+            print(f"Error fetching data from API: {e}")
+            return None
+        data = response.json()
     
     # Initialize a dictionary to store the extracted stats
     pokemon_main_stat = {} 
