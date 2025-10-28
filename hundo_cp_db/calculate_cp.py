@@ -1,6 +1,5 @@
 import math
 import json
-from get_main_to_base import extract_main_series_stats, calculate_pogo_base_stats
 
 # Load the Combat Power Modifier dictionary from a JSON file 
 def load_cpm_table():
@@ -40,6 +39,6 @@ def calculate_hundo_cp_dict(pokemon_go_base_stat, IV, CPM_TABLE):
         final_cp = math.floor(cp_value)
         
         # Minimum CP Check: If CP is less than 10, it's set to 10.
-        HUNDO_CP_DICT[str(level) ] = max(10, final_cp)
+        HUNDO_CP_DICT[str(level)] = max(10, final_cp)
 
     return HUNDO_CP_DICT
