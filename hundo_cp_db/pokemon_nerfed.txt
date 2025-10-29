@@ -9,7 +9,8 @@ palkia
 regigigas
 giratina-altered
 arceus-normal
-reshiramzekrom
+reshiram
+zekrom
 kyurem
 xerneas-active
 yveltal
