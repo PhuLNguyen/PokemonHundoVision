@@ -42,3 +42,22 @@ def calculate_hundo_cp_dict(pokemon_go_base_stat, IV, CPM_TABLE):
         HUNDO_CP_DICT[max(10, final_cp)] = str(level)
 
     return HUNDO_CP_DICT
+
+if __name__ == "__main__":
+    index = 0
+    CPM_TABLE = load_cpm_table()
+    pokemon_go_base_stats_file = open('1025_pokemon_go_base_stats.jsonl', 'r')
+    output_hundo_cp_file = open('1025_pokemon_go_hundo_cp.jsonl', 'w')
+    pokemon_list = [json.loads(line) for line in pokemon_go_base_stats_file]
+    for pokemon in pokemon_list:
+        index += 1
+        hundo_cp_dict = {}
+        hundo_cp_dict["ndex"] = index
+        hundo_cp_dict["name"] = pokemon['name']
+        hundo_cp_dict = hundo_cp_dict | calculate_hundo_cp_dict(pokemon, 15, CPM_TABLE)
+        output_hundo_cp_file.write(json.dumps(hundo_cp_dict) + '\n')
+        output_hundo_cp_file.flush()
+        print(f"Hundo CP Data for {pokemon['name']} successfully written.")
+
+    pokemon_go_base_stats_file.close()
+    output_hundo_cp_file.close()
