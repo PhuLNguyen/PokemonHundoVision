@@ -9,7 +9,7 @@ from postprocessing import extract_cp_and_name
 # Configuration
 # Cloud Run automatically injects the PORT environment variable
 PORT = int(os.environ.get("PORT", 8080))
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp'}
 # --- Get the MongoDB Connection URI from environment variables ---
 # This is defined in your docker-compose.yaml as the variable MONGO_URI
 # The value will be: 'mongodb://mongodb:27017/pogo'
@@ -92,7 +92,7 @@ def upload_file():
             if name and cp:
                 # Find the pokemon in the database along with its hundo data
                 pokemon_hundo_data = client.pogo.hundodata.find_one(
-                    { "name": name, cp: { "$exists": True } }
+                    { "Name": name, str(cp): { "$exists": True } }
                 )
 
                 if pokemon_hundo_data:
@@ -115,7 +115,7 @@ def upload_file():
                 }), 422
         except Exception as e:
             print(f"An error occurred: {e}")
-            return jsonify({"error": f"Internal server error: {e}"}), 500
+            return jsonify({"error": f"{e}"}), 500
     else:
         return jsonify({"error": "File type not allowed"}), 400
 
