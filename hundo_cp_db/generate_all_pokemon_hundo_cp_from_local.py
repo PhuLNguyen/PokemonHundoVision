@@ -28,7 +28,7 @@ if __name__ == "__main__":
             output_main_stats_file.write(json.dumps(pokemon_main_stat) + '\n')
             output_main_stats_file.flush()
             
-            pokemon_go_base_stat = calculate_pogo_base_stats(pokemon_main_stat)
+            pokemon_go_base_stat = calculate_pogo_base_stats(pokemon_main_stat, CPM_TABLE.get('40'))
             pokemon_go_base_stat["name"] = pokemon['forms'][0]['name']
             output_go_base_stats_file.write(json.dumps(pokemon_go_base_stat) + '\n')
             output_go_base_stats_file.flush()

@@ -49,7 +49,7 @@ def extract_main_series_stats(api_url_or_pokemon_data):
             
     return pokemon_main_stat
 
-def calculate_pogo_base_stats(pokemon_main_stat):
+def calculate_pogo_base_stats(pokemon_main_stat, cpm_at_level_40):
     """
     Calculates the Base Stats (Attack, Defense, Stamina) for Pokémon GO.
     (This function is replicated from the previous step for context)
@@ -77,4 +77,20 @@ def calculate_pogo_base_stats(pokemon_main_stat):
     base_sta = math.floor(1.75 * pokemon_main_stat['hp'] + 50)
     pokemon_go_base_stat['sta'] = base_sta
     
+    # Calculate unnerfed max L40 CP (IVs 15/15/15)
+    # CP = floor(((BaseATK + IV_A) * sqrt(BaseDEF + IV_D) * sqrt(BaseHP + IV_H) * CPM^2) / 10)
+    unnerfed_cp_value = (
+        (base_atk + 15) * math.sqrt(base_def + 15) * math.sqrt(base_sta + 15) * cpm_at_level_40**2 
+    ) / 10
+    unnerfed_max_L40_cp = math.floor(unnerfed_cp_value)
+    
+    # Determine nerf factor
+    nerf_factor = 0.91 if unnerfed_max_L40_cp > 4000 else 1.0
+
+    if nerf_factor < 1.0:
+        # Apply nerf to base stats
+        pokemon_go_base_stat['atk'] = round(base_atk * nerf_factor)
+        pokemon_go_base_stat['def'] = round(base_def * nerf_factor)
+        pokemon_go_base_stat['sta'] = round(base_sta * nerf_factor)
+
     return pokemon_go_base_stat
