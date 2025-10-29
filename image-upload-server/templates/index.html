@@ -3,16 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <title>Pokemon Hundo Checker</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        #result-container { margin-top: 20px; padding: 15px; border: 1px solid #ccc; background-color: #f9f9f9; }
+        .success { color: green; font-weight: bold; }
+        .error { color: red; font-weight: bold; }
+    </style>
 </head>
 <body>
     <h1>Upload a screenshot to check for Hundo</h1>
     <p>This page is served by Flask.</p>
-    <p>Allowed file: 'png', 'jpg', 'jpeg', 'webp'</p>
+    <p>Allowed file types: 'png', 'jpg', 'jpeg', 'webp'</p>
 
-    <form action="/upload" method="post" enctype="multipart/form-data">
+    <form id="upload-form" action="/upload" method="post" enctype="multipart/form-data">
         <input type="file" name="image" accept="image/*" required>
-        <button type="submit">Perform OCR</button>
+        <button type="submit" id="submit-button">Perform OCR</button>
     </form>
     
+    <div id="result-container">
+        <h2>Results</h2>
+        <p>Upload an image to see the Pokémon Hundo check result here.</p>
+    </div>
+
+    <script>
+        // Get the form and result container elements
+        const form = document.getElementById('upload-form');
+        const resultContainer = document.getElementById('result-container');
+        const submitButton = document.getElementById('submit-button');
+
+        // Add an event listener for the form submission
+        form.addEventListener('submit', async function(event) {
+            // Prevent the default form submission (which would cause a page reload)
+            event.preventDefault(); 
+
+            // Clear previous results and show a loading message
+            resultContainer.innerHTML = '<h2>Results</h2><p>Processing image... Please wait.</p>';
+            submitButton.disabled = true; // Disable button to prevent double submission
+            submitButton.textContent = 'Processing...';
+
+            try {
+                // Use the FormData API to easily capture the file input
+                const formData = new FormData(form);
+                
+                // Perform the asynchronous POST request
+                const response = await fetch(form.action, {
+                    method: form.method,
+                    body: formData,
+                });
+
+                const data = await response.json(); // Parse the JSON response
+
+                // Check if the HTTP response was OK (status 200)
+                if (response.ok) {
+                    // SUCCESS case
+                    const isHundo = data['HUNDO?'] === 'Yes';
+                    const hundoText = isHundo 
+                        ? `<span class="success">${data['HUNDO?']}!</span>` 
+                        : `<span class="error">${data['HUNDO?']}</span>`;
+
+                    resultContainer.innerHTML = `
+                        <h2>OCR Success!</h2>
+                        <p><strong>Extracted Pokémon:</strong> ${data['Extracted Pokémon Name']}</p>
+                        <p><strong>Extracted CP:</strong> ${data['Extracted Combat Power (CP)']}</p>
+                        <p><strong>100% IV (HUNDO)?</strong> ${hundoText}</p>
+                        ${isHundo ? `<p><strong>100% IV Level:</strong> ${data['100% IV Level']}</p>` : ''}
+                        <hr>
+                        <details>
+                            <summary>Vision API Raw Result</summary>
+                            <pre>${data['Vision API result']}</pre>
+                        </details>
+                    `;
+                } else {
+                    // ERROR case (e.g., 400, 422, 500)
+                    resultContainer.innerHTML = `
+                        <h2 class="error">Error!</h2>
+                        <p>An error occurred during processing:</p>
+                        <p><strong>Status:</strong> ${response.status} - ${response.statusText}</p>
+                        <p><strong>Details:</strong> ${data.error || 'Unknown error. Check server logs.'}</p>
+                    `;
+                }
+            } catch (e) {
+                // Network or parsing error
+                resultContainer.innerHTML = `
+                    <h2 class="error">Network Error!</h2>
+                    <p>Could not connect to the server or process the response.</p>
+                    <p>Details: ${e.message}</p>
+                `;
+            } finally {
+                // Re-enable the button and reset its text after the operation completes
+                submitButton.disabled = false;
+                submitButton.textContent = 'Perform OCR';
+                // Reset the file input so the user can immediately select a new file
+                form.reset(); 
+            }
+        });
+    </script>
 </body>
 </html>
