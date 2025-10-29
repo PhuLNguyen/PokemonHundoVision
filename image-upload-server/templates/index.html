@@ -80,6 +80,11 @@
                         <p>An error occurred during processing:</p>
                         <p><strong>Status:</strong> ${response.status} - ${response.statusText}</p>
                         <p><strong>Details:</strong> ${data.error || 'Unknown error. Check server logs.'}</p>
+                        <hr>
+                        <details>
+                            <summary>Vision API Raw Result</summary>
+                            <pre>${data['Vision API result']}</pre>
+                        </details>
                     `;
                 }
             } catch (e) {
