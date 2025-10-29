@@ -51,28 +51,6 @@ def detect_text_from_bytes(image_bytes):
         return response.full_text_annotation.text
     return "No text detected."
 
-def find_field_name_by_value(document, target_value):
-    """
-    Searches a Python dictionary (MongoDB document) for a specific value
-    and returns the corresponding key (field name).
-    """
-    
-    # 1. Iterate through the key-value pairs of the dictionary
-    for key, value in document.items():
-        
-        # 2. Skip fields that are not CP values (i.e., 'Ndex' and 'Name')
-        # We only want to check fields whose keys are numbers (the levels)
-        if key in ['Ndex', 'Name']:
-            continue
-            
-        # 3. Check if the current value matches the target value
-        if value == target_value:
-            # 4. If they match, return the key (which is the level)
-            return key
-            
-    # 5. Return None if the value is not found in any relevant field
-    return None
-
 #-------------------------------------------------------------
 # Routes
 #-------------------------------------------------------------
@@ -114,19 +92,21 @@ def upload_file():
             if name and cp:
                 # Find the pokemon in the database along with its hundo data
                 pokemon_hundo_data = client.pogo.hundodata.find_one(
-                    {"name": name}
+                    { "name": name, cp: { "$exists": True } }
                 )
 
-                # Find the level corresponding to the extracted CP
-                hundo_lvl = find_field_name_by_value(pokemon_hundo_data, cp)
+                if pokemon_hundo_data:
+                    pokemon_lvl = pokemon_hundo_data[cp]
+                else:
+                    pokemon_lvl = None
 
                 # Return the detected text as a JSON response
                 return jsonify({
                     "Vision API result": ocr_text,
                     "Extracted Pokémon Name": name,
                     "Extracted Combat Power (CP)": cp,
-                    "HUNDO?": "Yes" if hundo_lvl else "No",
-                    "100% IV Level": hundo_lvl
+                    "HUNDO?": "Yes" if pokemon_lvl else "No",
+                    "100% IV Level": pokemon_lvl
                 }), 200
             else:
                 return jsonify({
