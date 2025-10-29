@@ -92,13 +92,13 @@ def upload_file():
             if name and cp:
                 # Find the pokemon in the database along with its hundo data
                 pokemon_hundo_data = client.pogo.hundodata.find_one(
-                    { "Name": name, str(cp): { "$exists": True } }
+                    {"name": name}
                 )
 
+                pokemon_lvl = None
+
                 if pokemon_hundo_data:
-                    pokemon_lvl = pokemon_hundo_data[cp]
-                else:
-                    pokemon_lvl = None
+                    pokemon_lvl = pokemon_hundo_data.get(str(cp))
 
                 # Return the detected text as a JSON response
                 return jsonify({
