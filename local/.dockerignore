@@ -1,0 +1,8 @@
+# Dependency directory
+node_modules
+# Editor and operating system files
+.git
+.gitignore
+.DS_Store
+# Uploaded files directory
+uploads
