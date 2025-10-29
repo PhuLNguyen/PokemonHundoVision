@@ -10,3 +10,4 @@ image-upload-server/__pycache__/preprocessing.cpython-311.pyc
 hundo_cp_db/1025_pokemon_main.jsonl
 hundo_cp_db/__pycache__/calculate_cp.cpython-310.pyc
 hundo_cp_db/__pycache__/get_main_to_base.cpython-310.pyc
+image-upload-server/__pycache__/postprocessing.cpython-311.pyc
