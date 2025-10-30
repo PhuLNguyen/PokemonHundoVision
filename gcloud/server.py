@@ -26,7 +26,6 @@ try:
 except Exception as e:
     print(f"Error connecting to MongoDB: {e}")
     # You might want to handle this more gracefully in a production app
-    exit(1)
 
 # Initialize Google Cloud Vision Client
 vision_client = vision.ImageAnnotatorClient()
@@ -91,22 +90,20 @@ def upload_file():
 
             if name and cp:
                 # Find the pokemon in the database along with its hundo data
-                pokemon_hundo_data = client.pogo.hundodata.find_one(
-                    {"name": name}
-                )
+                #pokemon_hundo_data = client.pogo.hundodata.find_one({"name": name})
 
-                pokemon_lvl = None
+                #pokemon_lvl = None
 
-                if pokemon_hundo_data:
-                    pokemon_lvl = pokemon_hundo_data.get(str(cp))
+                #if pokemon_hundo_data:
+                #    pokemon_lvl = pokemon_hundo_data.get(str(cp))
 
                 # Return the detected text as a JSON response
                 return jsonify({
                     "Vision API result": ocr_text,
                     "Extracted Pokémon Name": name,
                     "Extracted Combat Power (CP)": cp,
-                    "HUNDO?": "Yes" if pokemon_lvl else "No",
-                    "100% IV Level": pokemon_lvl
+                    #"HUNDO?": "Yes" if pokemon_lvl else "No",
+                    #"100% IV Level": pokemon_lvl
                 }), 200
             else:
                 return jsonify({
