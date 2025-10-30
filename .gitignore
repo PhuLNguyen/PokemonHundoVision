@@ -11,3 +11,10 @@ hundo_cp_db/1025_pokemon_main.jsonl
 hundo_cp_db/__pycache__/calculate_cp.cpython-310.pyc
 hundo_cp_db/__pycache__/get_main_to_base.cpython-310.pyc
 image-upload-server/__pycache__/postprocessing.cpython-311.pyc
+gcloud/.terraform.lock.hcl
+gcloud/terraform.tfstate
+gcloud/terraform.tfstate.backup
+gcloud/.terraform/providers/registry.terraform.io/hashicorp/google/7.9.0/linux_amd64/LICENSE.txt
+gcloud/.terraform/providers/registry.terraform.io/hashicorp/google/7.9.0/linux_amd64/terraform-provider-google_v7.9.0_x5
+gcloud/.terraform/providers/registry.terraform.io/hashicorp/google-beta/6.50.0/linux_amd64/LICENSE.txt
+gcloud/.terraform/providers/registry.terraform.io/hashicorp/google-beta/6.50.0/linux_amd64/terraform-provider-google-beta_v6.50.0_x5
