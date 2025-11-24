@@ -1,9 +1,6 @@
 # Use an official Python runtime as a parent image
-FROM python:3.11-slim
+FROM python:3.12-slim
 
-# Set environment variables
-# Set the port the application listens on (as defined in server.py)
-ENV PORT=8080
 # Set the working directory in the container
 WORKDIR /app
 
@@ -15,7 +12,7 @@ RUN apt-get update && apt-get install -y \
 
 # Install any dependencies specified in your requirements file.
 # We explicitly install the required libraries here.
-# It's best practice to use a requirements.txt, but for simplicity, we install directly.
+# It's best practice to use a requirements.txt
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
@@ -25,6 +22,14 @@ COPY templates /app/templates
 
 # Copy pokemon data to container
 COPY mongo-init/hundo-data.jsonl /app/
+
+# Set environment variables
+# Set the port the application listens on (as defined in server.py)
+ENV PORT=8080
+
+# Python interpreter automatically forces all standard streams (stdout, stderr) to be unbuffered.
+#   Which show all output immediately in Cloud Run log
+ENV PYTHONUNBUFFERED 1
 
 # Expose the port the app runs on
 EXPOSE ${PORT}

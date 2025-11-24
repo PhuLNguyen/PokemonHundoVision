@@ -15,8 +15,6 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp'}
 # --- Get the MongoDB Connection URI from environment variables ---
 MONGODB_URI = os.environ.get("MONGODB_URI")
 
-app = Flask(__name__)
-
 # --- Establish the MongoDB connection ---
 try:
     db = MongoClient(MONGODB_URI)
@@ -64,6 +62,9 @@ def init_db():
         print("Finished insertion of", len(documents_to_insert), "Pokemons!")
     except Exception as e:
         print("Unexpected error: ", e)
+
+init_db()
+app = Flask(__name__)
 
 #-------------------------------------------------------------
 # Routes
@@ -132,8 +133,8 @@ def upload_file():
         return jsonify({"error": "File type not allowed"}), 400
 
 #-------------------------------------------------------------
-# Main entry point
+# Main entry point when running the server locally
+# python3 server.py
 #-------------------------------------------------------------
 if __name__ == '__main__':
-    init_db()
     app.run(debug=True, host='0.0.0.0', port=PORT)
