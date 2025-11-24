@@ -11,13 +11,13 @@ terraform {
 
 # Provider configuration
 provider "google-beta" {
-  project = "perfect-altar-469621-g6"
+  project = var.PROJECT_ID
   region  = "us-central1" 
 }
 
 # 1. Provision the Firestore Database
 resource "google_firestore_database" "database" {
-  project    = "perfect-altar-469621-g6"
+  project    = var.PROJECT_ID
   name        = "pogo" 
   location_id = "us-central1"
   type             = "FIRESTORE_NATIVE"
