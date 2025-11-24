@@ -46,48 +46,61 @@ sudo apt install google-cloud-sdk -y
 gcloud init
 ```
 
-###
+- Authenticate ADC for Terraform, select all checkboxes to allow gcloud access
 ```bash
 gcloud auth application-default login
 ```
-- select all checkboxes to allow gcloud access
+
+### Setup environment variables (Project ID, Project Number, Service Account Email)
+```bash
+PROJECT_ID=$(gcloud config get-value project)
+PROJECT_NUMBER=$(gcloud projects describe $PROJECT_ID --format="value(projectNumber)")
+SERVICE_ACCOUNT_EMAIL="${PROJECT_NUMBER}-compute@developer.gserviceaccount.com"
+echo "The Project ID is: $PROJECT_ID"
+echo "The Project Number is: $PROJECT_NUMBER"
+echo "The Service Account email is: $SERVICE_ACCOUNT_EMAIL"
+```
 
 ### Link Billing Account to Project
 ```bash
-gcloud billing accounts list
-gcloud alpha billing projects link [PROJECT_ID] \
-    --billing-account [YOUR_BILLING_ACCOUNT_ID]
+BILLING_ACCOUNT_ID=$(gcloud billing accounts list --format="value(name.segment(1))")
+echo "The Billing Account ID is: $BILLING_ACCOUNT_ID"
+gcloud alpha billing projects link $PROJECT_ID \
+    --billing-account $BILLING_ACCOUNT_ID
 ``` 
 
-### Enable APIs (Cloud Vision, Firestore, Cloud Build, Artifact Registry, Cloud Run) 
+### Enable APIs: 
+- Cloud Vision, Firestore, Cloud Build, Artifact Registry, Cloud Run, Secret Manager 
+
 ```bash
 gcloud services enable \
     vision.googleapis.com \
     firestore.googleapis.com \
     cloudbuild.googleapis.com \
     artifactregistry.googleapis.com \
-    run.googleapis.com
+    run.googleapis.com \
+    secretmanager.googleapis.com
 ```
 
 ### IAM policy configuration
-- Get Project Number
+- Grant service account with:
+  - access to Machine Learning (Cloud Vision API), 
+  - read/write access to Firestore
+  - access MongoDB connection string stored in Secret Manager
+  - To let Cloud Run edit Authentication -> Allow public access 
+
 ```bash
-gcloud projects describe $(gcloud config get-value project) --format="value(projectNumber)"
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+  --member="serviceAccount:$SERVICE_ACCOUNT_EMAIL" \
+  --role="roles/ml.developer" \
+  --role="roles/datastore.user" \
+  --role="roles/secretmanager.secretAccessor" \
+  --role="roles/run.admin"
 ```
 
-- Replace **[PROJECT_NUMBER]** with your actual number found in command above 
+---
 
-```bash
-gcloud projects add-iam-policy-binding [PROJECT_NUMBER] \
-  --member='serviceAccount:[PROJECT_NUMBER]-compute@developer.gserviceaccount.com' \
-  --role='roles/ml.developer'
-
-gcloud beta run services add-iam-policy-binding --region=us-central1 --member=allUsers --role=roles/run.invoker image-ocr-service
-```
-
-- Replace **[PROJECT_ID]** with your actual project name (not Project Number)
-
-### Create the MongoDB-Compatible Database
+## Create the MongoDB-Compatible Database
 ```bash
 terraform validate
 terraform init
@@ -95,14 +108,36 @@ export TF_VAR_PROJECT_ID=pokemon-hundo-vision
 terraform apply -auto-approve
 ```
 
+- Create MongoDB environment variable
+```bash
+DATABASE_UID=$(gcloud firestore databases describe --database=pogo --format="value(uid)")
+MONGODB_URI="mongodb://${DATABASE_UID}.us-central1.firestore.goog:443/pogo?loadBalanced=true&tls=true&retryWrites=false&authMechanism=MONGODB-OIDC&authMechanismProperties=ENVIRONMENT:gcp,TOKEN_RESOURCE:FIRESTORE"
+echo "DATABASE_UID is: $DATABASE_UID"
+echo "MONGODB_URI is: $MONGODB_URI"
+echo $MONGODB_URI | gcloud secrets create MONGODB_URI \
+    --data-file=- \
+    --replication-policy="automatic"
+```
 
+- Verify that the MONGODB_URI is created successfully in Secret Manager
+```bash
+gcloud secrets versions access latest --secret=MONGODB_URI
+```
 
-### Publish the App on Google Cloud Run
+---
+
+## Deploy the App on Google Cloud 
 ```bash
 gcloud builds submit --config=cloudbuild.yaml
 ```
 
---------------------------------------------------------
+---
+
+## Access the App
+- Look for the output **Step #2 - "Deploy": Service URL:**
+- The URL should look like https://image-ocr-service-[PROJECT_NUMBER].us-central1.run.app
+
+---
 
 ## Clean Up
 
@@ -127,4 +162,6 @@ gcloud firestore databases delete --database=[DATABASE_ID]
 ```
 
 ### 
+- Delete pokemon-hundo-vision_cloudbuild bucket in Cloud Storage
 - Delete Snapshots in Compute Engine
+- Secret Manager

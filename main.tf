@@ -26,9 +26,3 @@ resource "google_firestore_database" "database" {
   # Lifecycle policies
   delete_protection_state = "DELETE_PROTECTION_DISABLED"
 }
-
-# Output the Connection URI for Initialization
-# This value must be retrieved manually using the gcloud CLI after deployment
-output "firestore_mongodb_connection_guide" {
-  value = "Run 'gcloud firestore databases describe pogo --format=\"value(mongodb_uri)\"' to get the connection URI for the next step."
-}

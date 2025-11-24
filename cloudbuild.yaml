@@ -40,3 +40,4 @@ steps:
     - '--region'
     - '$_REGION'
     - '--allow-unauthenticated'
+    - '--update-secrets=MONGODB_URI=MONGODB_URI:latest'
