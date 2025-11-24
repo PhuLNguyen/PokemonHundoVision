@@ -3,7 +3,7 @@
 ---
 
 ## Install Terraform
-You can skip this section if Terraform already installed
+- You can skip this section if Terraform already installed
 
 ```bash
 sudo apt-get update && sudo apt-get install -y gnupg software-properties-common
@@ -17,7 +17,7 @@ sudo apt-get install terraform
 ---
 
 ## Google Cloud CLI (gcloud) Installation
-You can skip this section if gcloud already installed
+- You can skip this section if gcloud already installed
 
 ### Install dependencies and GPG Key
 ```bash
@@ -50,7 +50,7 @@ gcloud init
 ```bash
 gcloud auth application-default login
 ```
-Select all checkboxes to allow gcloud access
+- select all checkboxes to allow gcloud access
 
 ### Link Billing Account to Project
 ```bash
@@ -75,7 +75,7 @@ gcloud services enable \
 gcloud projects describe $(gcloud config get-value project) --format="value(projectNumber)"
 ```
 
-Replace [PROJECT_NUMBER] with your actual number found in command above 
+- Replace **[PROJECT_NUMBER]** with your actual number found in command above 
 
 ```bash
 gcloud projects add-iam-policy-binding [PROJECT_NUMBER] \
@@ -85,7 +85,7 @@ gcloud projects add-iam-policy-binding [PROJECT_NUMBER] \
 gcloud beta run services add-iam-policy-binding --region=us-central1 --member=allUsers --role=roles/run.invoker image-ocr-service
 ```
 
-Replace [PROJECT_ID] with your actual project name (not Project Number)
+- Replace **[PROJECT_ID]** with your actual project name (not Project Number)
 
 ### Create the MongoDB-Compatible Database
 ```bash
