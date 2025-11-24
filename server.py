@@ -13,8 +13,10 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp'}
 
 # Initialize the Firestore client
 # It automatically uses the Cloud Run Service Account credentials (ADC).
-db = firestore.Client()
-hundodata_collection = db.collection(u'hundodata')
+DATABASE_ID = 'pogo'
+COLLECTION_NAME = u'hundodata'
+db = firestore.Client(database=DATABASE_ID)
+hundodata_collection = db.collection(COLLECTION_NAME)
 
 # Initialize Google Cloud Vision Client
 vision_client = vision.ImageAnnotatorClient()
@@ -43,6 +45,15 @@ def init_db():
     data_filename = "hundo-data.jsonl"
     documents_to_insert = []
 
+    # Check if the collection exist and has any data
+    query = hundodata_collection.limit(1)
+    results = query.get()
+    if results:
+        print(f"Collection {COLLECTION_NAME} exists and has some data!")
+        return
+    else:
+        print(f"Collection {COLLECTION_NAME} not exists nor has any data!")
+
     print("Open Pokemon data file...")
 
     try:
@@ -61,7 +72,7 @@ def init_db():
             # add document to the batch
             batch.set(doc_ref, document)
 
-        print("Finished reading file", data_filename, ". Inserting data into Firestore (MongoDB)...")
+        print("Finished reading file", data_filename, ". Inserting Pokemon data into Firestore...")
         batch.commit()
         print("Finished insertion of", len(documents_to_insert), "Pokemons!")
     except Exception as e:
@@ -106,7 +117,7 @@ def upload_file():
             name, cp = extract_cp_and_name(ocr_text)
             name = name.lower() if name else name
 
-            print(f"Extracted Pokemon Name: {name}, CP: {cp}")
+            print(f"Extracted name and cp: {name}, CP: {cp}")
 
             if name and cp:
                 pokemon_lvl = None
@@ -122,9 +133,13 @@ def upload_file():
                 if results:
                     # Access the first doc in the list
                     doc = results[0]
+                    print("Docs: ", doc)
                     pokemon_hundo_dict = doc.to_dict()
+                    print("Pokemon dict: ", pokemon_hundo_dict)
+                    cp = str(cp)
                     if cp in pokemon_hundo_dict:
-                        pokemon_lvl = pokemon_hundo_dict[cp]                
+                        pokemon_lvl = pokemon_hundo_dict[cp]       
+                        print("Pokemon lvl: ", pokemon_lvl)         
 
                 # Return the detected text as a JSON response
                 return jsonify({

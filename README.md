@@ -97,7 +97,7 @@ gcloud projects add-iam-policy-binding $PROJECT_ID \
 
 ---
 
-## Create the MongoDB-Compatible Database
+## Provision a Firestore database
 ```bash
 terraform validate
 terraform init
@@ -144,4 +144,3 @@ gcloud firestore databases delete --database=[DATABASE_ID]
 
 ### 
 - Delete pokemon-hundo-vision_cloudbuild bucket in Cloud Storage
-- Secret Manager
