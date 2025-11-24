@@ -1,6 +1,6 @@
 Flask
 google-cloud-vision
+google-cloud-firestore
 gunicorn  # Recommended for production deployments like Cloud Run
 opencv-python
 numpy
-pymongo

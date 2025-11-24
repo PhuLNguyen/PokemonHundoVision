@@ -21,7 +21,7 @@ COPY server.py postprocessing.py preprocessing.py ./
 COPY templates /app/templates
 
 # Copy pokemon data to container
-COPY mongo-init/hundo-data.jsonl /app/
+COPY pokemon-data/hundo-data.jsonl /app/
 
 # Set environment variables
 # Set the port the application listens on (as defined in server.py)

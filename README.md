@@ -70,7 +70,7 @@ gcloud alpha billing projects link $PROJECT_ID \
 ``` 
 
 ### Enable APIs: 
-- Cloud Vision, Firestore, Cloud Build, Artifact Registry, Cloud Run, Secret Manager 
+- Cloud Vision, Firestore, Cloud Build, Artifact Registry, Cloud Run
 
 ```bash
 gcloud services enable \
@@ -78,15 +78,13 @@ gcloud services enable \
     firestore.googleapis.com \
     cloudbuild.googleapis.com \
     artifactregistry.googleapis.com \
-    run.googleapis.com \
-    secretmanager.googleapis.com
+    run.googleapis.com 
 ```
 
 ### IAM policy configuration
 - Grant service account with:
   - access to Machine Learning (Cloud Vision API), 
   - read/write access to Firestore
-  - access MongoDB connection string stored in Secret Manager
   - To let Cloud Run edit Authentication -> Allow public access 
 
 ```bash
@@ -94,7 +92,6 @@ gcloud projects add-iam-policy-binding $PROJECT_ID \
   --member="serviceAccount:$SERVICE_ACCOUNT_EMAIL" \
   --role="roles/ml.developer" \
   --role="roles/datastore.user" \
-  --role="roles/secretmanager.secretAccessor" \
   --role="roles/run.admin"
 ```
 
@@ -106,22 +103,6 @@ terraform validate
 terraform init
 export TF_VAR_PROJECT_ID=pokemon-hundo-vision
 terraform apply -auto-approve
-```
-
-- Create MongoDB environment variable
-```bash
-DATABASE_UID=$(gcloud firestore databases describe --database=pogo --format="value(uid)")
-MONGODB_URI="mongodb://${DATABASE_UID}.us-central1.firestore.goog:443/pogo?loadBalanced=true&tls=true&retryWrites=false&authMechanism=MONGODB-OIDC&authMechanismProperties=ENVIRONMENT:gcp,TOKEN_RESOURCE:FIRESTORE"
-echo "DATABASE_UID is: $DATABASE_UID"
-echo "MONGODB_URI is: $MONGODB_URI"
-echo $MONGODB_URI | gcloud secrets create MONGODB_URI \
-    --data-file=- \
-    --replication-policy="automatic"
-```
-
-- Verify that the MONGODB_URI is created successfully in Secret Manager
-```bash
-gcloud secrets versions access latest --secret=MONGODB_URI
 ```
 
 ---
@@ -163,5 +144,4 @@ gcloud firestore databases delete --database=[DATABASE_ID]
 
 ### 
 - Delete pokemon-hundo-vision_cloudbuild bucket in Cloud Storage
-- Delete Snapshots in Compute Engine
 - Secret Manager

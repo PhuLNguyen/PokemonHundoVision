@@ -1,8 +1,7 @@
 import json
-import os # We'll use this to read the MONGO_URI from the environment var defined in docker-compose.yaml
+import os 
 from flask import Flask, request, jsonify, render_template, send_file
-from pymongo import MongoClient
-from google.cloud import vision
+from google.cloud import vision, firestore
 from preprocessing import detect_dark_oval_banner
 from postprocessing import extract_cp_and_name
 
@@ -12,15 +11,10 @@ from postprocessing import extract_cp_and_name
 PORT = int(os.environ.get("PORT", 8080))
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp'}
 
-# --- Get the MongoDB Connection URI from environment variables ---
-MONGODB_URI = os.environ.get("MONGODB_URI")
-
-# --- Establish the MongoDB connection ---
-try:
-    db = MongoClient(MONGODB_URI)
-except Exception as e:
-    print("Error connecting to MongoDB: ", e)
-    # You might want to handle this more gracefully in a production app
+# Initialize the Firestore client
+# It automatically uses the Cloud Run Service Account credentials (ADC).
+db = firestore.Client()
+hundodata_collection = db.collection(u'hundodata')
 
 # Initialize Google Cloud Vision Client
 vision_client = vision.ImageAnnotatorClient()
@@ -57,8 +51,18 @@ def init_db():
                 line = line.strip()
                 document = json.loads(line)
                 documents_to_insert.append(document)
+
+        # This is much faster than individual 'add' calls.
+        batch = db.batch()
+
+        for document in documents_to_insert:
+            # create new document reference
+            doc_ref = hundodata_collection.document()
+            # add document to the batch
+            batch.set(doc_ref, document)
+
         print("Finished reading file", data_filename, ". Inserting data into Firestore (MongoDB)...")
-        db.hundodata.insert_many(documents_to_insert)
+        batch.commit()
         print("Finished insertion of", len(documents_to_insert), "Pokemons!")
     except Exception as e:
         print("Unexpected error: ", e)
@@ -105,13 +109,22 @@ def upload_file():
             print(f"Extracted Pokemon Name: {name}, CP: {cp}")
 
             if name and cp:
-                # Find the pokemon in the database along with its hundo data
-                pokemon_hundo_data = db.hundodata.find_one({"name": name})
-
                 pokemon_lvl = None
 
-                if pokemon_hundo_data:
-                    pokemon_lvl = pokemon_hundo_data.get(str(cp))
+                # Create the query: Select documents where 'name' equals the pokemon name
+                # .limit(1) ensures the query stops after finding the first match
+                query = hundodata_collection.where(u'name', u'==', name).limit(1)
+
+                # Execute the query
+                # The .get() method returns a list of DocumentSnapshot objects
+                results = query.get()
+
+                if results:
+                    # Access the first doc in the list
+                    doc = results[0]
+                    pokemon_hundo_dict = doc.to_dict()
+                    if cp in pokemon_hundo_dict:
+                        pokemon_lvl = pokemon_hundo_dict[cp]                
 
                 # Return the detected text as a JSON response
                 return jsonify({
