@@ -1,5 +1,17 @@
 # Pokemon Hundo Vision
 
+## Install Terraform
+You can skip this section if gcloud already installed
+
+```bash
+sudo apt-get update && sudo apt-get install -y gnupg software-properties-common
+wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg > /dev/null
+gpg --no-default-keyring --keyring /usr/share/keyrings/hashicorp-archive-keyring.gpg --fingerprint
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(grep -oP '(?<=UBUNTU_CODENAME=).*' /etc/os-release || lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+sudo apt update
+sudo apt-get install terraform
+```
+
 ## Google Cloud CLI (gcloud) Installation
 You can skip this section if gcloud already installed
 
@@ -30,6 +42,12 @@ sudo apt install google-cloud-sdk -y
 gcloud init
 ```
 
+###
+```bash
+gcloud auth application-default login
+```
+Select all checkboxes to allow gcloud access
+
 ### Link Billing Account to Project
 ```bash
 gcloud billing accounts list
@@ -53,20 +71,27 @@ gcloud services enable \
 gcloud projects describe $(gcloud config get-value project) --format="value(projectNumber)"
 ```
 
+Replace [PROJECT_NUMBER] with your actual number found in command above 
+
 ```bash
 gcloud projects add-iam-policy-binding [PROJECT_NUMBER] \
   --member='serviceAccount:[PROJECT_NUMBER]-compute@developer.gserviceaccount.com' \
   --role='roles/ml.developer'
 
-gcloud beta run services add-iam-policy-binding --region=[REGION] --member=allUsers --role=roles/run.invoker image-ocr-service
+gcloud beta run services add-iam-policy-binding --region=us-central1 --member=allUsers --role=roles/run.invoker image-ocr-service
 ```
+
+Replace [PROJECT_ID] with your actual project name (not Project Number)
 
 ### Create the MongoDB-Compatible Database
 ```bash
-terraform init
 terraform validate
-terraform apply
+terraform init
+export TF_VAR_PROJECT_ID=pokemon-hundo-vision
+terraform apply -auto-approve
 ```
+
+
 
 ### Publish the App on Google Cloud Run
 ```bash
@@ -79,7 +104,7 @@ gcloud builds submit --config=cloudbuild.yaml
 
 ### Delete the Cloud Run Service
 ```bash
-gcloud run services delete [SERVICE_NAME] --region [REGION]
+gcloud run services delete image-ocr-service --region us-central1
 ```
 
 ### List repositories to find the name (e.g., 'cloud-run-source-deploy')
@@ -89,7 +114,7 @@ gcloud artifacts repositories list
 
 ### Command to Delete an Artifact Registry Repository 🗑️
 ```bash
-gcloud artifacts repositories delete [REPOSITORY_NAME] --location=[LOCATION]
+gcloud artifacts repositories delete [REPOSITORY_NAME] --location=us-central1
 ```
 
 ### Comand to Delete a Firestore database
