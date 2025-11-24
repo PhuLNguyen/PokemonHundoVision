@@ -1,7 +1,9 @@
 # Pokemon Hundo Vision
 
+---
+
 ## Install Terraform
-You can skip this section if gcloud already installed
+You can skip this section if Terraform already installed
 
 ```bash
 sudo apt-get update && sudo apt-get install -y gnupg software-properties-common
@@ -11,6 +13,8 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashi
 sudo apt update
 sudo apt-get install terraform
 ```
+
+---
 
 ## Google Cloud CLI (gcloud) Installation
 You can skip this section if gcloud already installed
