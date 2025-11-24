@@ -1,3 +1,4 @@
+import json
 import os # We'll use this to read the MONGO_URI from the environment var defined in docker-compose.yaml
 from flask import Flask, request, jsonify, render_template, send_file
 from pymongo import MongoClient
@@ -10,21 +11,17 @@ from postprocessing import extract_cp_and_name
 # Cloud Run automatically injects the PORT environment variable
 PORT = int(os.environ.get("PORT", 8080))
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp'}
+
 # --- Get the MongoDB Connection URI from environment variables ---
-# This is defined in your docker-compose.yaml as the variable MONGO_URI
-# The value will be: 'mongodb://mongodb:27017/pogo'
-MONGO_URI = os.environ.get('MONGO_URI', 'mongodb://localhost:27017/pogo') # Fallback to localhost for local testing
+MONGODB_URI = os.environ.get("MONGODB_URI")
 
 app = Flask(__name__)
 
 # --- Establish the MongoDB connection ---
 try:
-    client = MongoClient(MONGO_URI)
-    # Ping the server to check the connection
-    client.admin.command('ping') 
-    print("Successfully connected to MongoDB")
+    db = MongoClient(MONGODB_URI)
 except Exception as e:
-    print(f"Error connecting to MongoDB: {e}")
+    print("Error connecting to MongoDB: ", e)
     # You might want to handle this more gracefully in a production app
 
 # Initialize Google Cloud Vision Client
@@ -49,6 +46,24 @@ def detect_text_from_bytes(image_bytes):
     if response.full_text_annotation and response.full_text_annotation.text:
         return response.full_text_annotation.text
     return "No text detected."
+
+def init_db():
+    data_filename = "hundo-data.jsonl"
+    documents_to_insert = []
+
+    print("Open Pokemon data file...")
+
+    try:
+        with open(data_filename, "r") as file:
+            for line in file:
+                line = line.strip()
+                document = json.loads(line)
+                documents_to_insert.append(document)
+        print("Finished reading file", data_filename, ". Inserting data into Firestore (MongoDB)...")
+        db.hundodata.insert_many(documents_to_insert)
+        print("Finished insertion of", len(documents_to_insert), "Pokemons!")
+    except Exception as e:
+        print("Unexpected error: ", e)
 
 #-------------------------------------------------------------
 # Routes
@@ -90,20 +105,20 @@ def upload_file():
 
             if name and cp:
                 # Find the pokemon in the database along with its hundo data
-                #pokemon_hundo_data = client.pogo.hundodata.find_one({"name": name})
+                pokemon_hundo_data = db.hundodata.find_one({"name": name})
 
-                #pokemon_lvl = None
+                pokemon_lvl = None
 
-                #if pokemon_hundo_data:
-                #    pokemon_lvl = pokemon_hundo_data.get(str(cp))
+                if pokemon_hundo_data:
+                    pokemon_lvl = pokemon_hundo_data.get(str(cp))
 
                 # Return the detected text as a JSON response
                 return jsonify({
                     "Vision API result": ocr_text,
                     "Extracted Pokémon Name": name,
                     "Extracted Combat Power (CP)": cp,
-                    #"HUNDO?": "Yes" if pokemon_lvl else "No",
-                    #"100% IV Level": pokemon_lvl
+                    "HUNDO?": "Yes" if pokemon_lvl else "No",
+                    "100% IV Level": pokemon_lvl
                 }), 200
             else:
                 return jsonify({
@@ -120,4 +135,5 @@ def upload_file():
 # Main entry point
 #-------------------------------------------------------------
 if __name__ == '__main__':
+    init_db()
     app.run(debug=True, host='0.0.0.0', port=PORT)

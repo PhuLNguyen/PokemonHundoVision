@@ -23,6 +23,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY server.py postprocessing.py preprocessing.py ./
 COPY templates /app/templates
 
+# Copy pokemon data to container
+COPY mongo-init/hundo-data.jsonl /app/
+
 # Expose the port the app runs on
 EXPOSE ${PORT}
 
