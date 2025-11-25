@@ -1,0 +1,25 @@
+body {
+	font-family: Arial, sans-serif; margin: 20px;
+
+	/* 1. Specify the image file */
+	background-image: url('../images/faded_gallery-OfdOEdGYiuk-unsplash.jpg');
+	
+	/* 2. Control how the image repeats */
+	background-repeat: no-repeat;
+	
+	/* 3. Control image size/scaling */
+	/* 'cover' scales the image to cover the entire container (body), 
+		potentially clipping parts if the aspect ratio doesn't match. */
+	background-size: cover; 
+	
+	/* 4. Control image position (center is usually a good default) */
+	background-position: center; 
+	
+	/* 5. Control if the image scrolls with content */
+	/* 'fixed' keeps the background image stationary when scrolling. */
+	background-attachment: fixed;
+}
+
+#result-container { margin-top: 20px; padding: 15px; border: 1px solid #ccc; background-color: #f9f9f9; }
+        .success { color: green; font-weight: bold; }
+        .error { color: red; font-weight: bold; }
