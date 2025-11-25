@@ -16,9 +16,10 @@ RUN apt-get update && apt-get install -y \
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the server.py and templates directory into the container
-COPY server.py postprocessing.py preprocessing.py ./
+# Copy the server.py file, static, and templates directory into the container
+COPY server.py postprocessing.py preprocessing.py /app/
 COPY static /app/static
+COPY templates /app/templates
 
 # Copy pokemon data to container
 COPY pokemon-data/hundo-data.jsonl /app/
