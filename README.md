@@ -122,25 +122,9 @@ gcloud builds submit --config=cloudbuild.yaml
 
 ## Clean Up
 
-### Delete the Cloud Run Service
 ```bash
+terraform destroy
 gcloud run services delete image-ocr-service --region us-central1
+gcloud artifacts repositories delete gcr.io --location=us
+gcloud storage rm -r gs://pokemon-hundo-vision_cloudbuild
 ```
-
-### List repositories to find the name (e.g., 'cloud-run-source-deploy')
-```bash
-gcloud artifacts repositories list
-```
-
-### Command to Delete an Artifact Registry Repository 🗑️
-```bash
-gcloud artifacts repositories delete [REPOSITORY_NAME] --location=us-central1
-```
-
-### Comand to Delete a Firestore database
-```bash
-gcloud firestore databases delete --database=[DATABASE_ID]
-```
-
-### 
-- Delete pokemon-hundo-vision_cloudbuild bucket in Cloud Storage
