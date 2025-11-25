@@ -25,4 +25,5 @@ resource "google_firestore_database" "database" {
   
   # Lifecycle policies
   delete_protection_state = "DELETE_PROTECTION_DISABLED"
+  deletion_policy = "DELETE"
 }
