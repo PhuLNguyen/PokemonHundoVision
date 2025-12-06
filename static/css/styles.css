@@ -1,25 +1,44 @@
 body {
-	font-family: Arial, sans-serif; margin: 20px;
-
-	/* 1. Specify the image file */
-	background-image: url('../images/faded_gallery-OfdOEdGYiuk-unsplash.jpg');
+	font-family: Arial, sans-serif;
+	margin: 20px;
 	
+	/* 1. Specify the image file AND ADD AN OVERLAY */
+	/* We use a linear-gradient that goes from transparent black to transparent black. 
+       The 'rgba(0, 0, 0, 0.5)' adds a 50% opaque black layer over the image. */
+	background-image: 
+        linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
+        url('../images/faded_gallery-OfdOEdGYiuk-unsplash.jpg');
+	
+	/* --- NEW: Change default text color to white for contrast --- */
+	color: #ffffff; 
+
 	/* 2. Control how the image repeats */
 	background-repeat: no-repeat;
 	
 	/* 3. Control image size/scaling */
-	/* 'cover' scales the image to cover the entire container (body), 
-		potentially clipping parts if the aspect ratio doesn't match. */
 	background-size: cover; 
 	
 	/* 4. Control image position (center is usually a good default) */
 	background-position: center; 
 	
 	/* 5. Control if the image scrolls with content */
-	/* 'fixed' keeps the background image stationary when scrolling. */
 	background-attachment: fixed;
 }
 
-#result-container { margin-top: 20px; padding: 15px; border: 1px solid #ccc; background-color: #f9f9f9; }
-        .success { color: green; font-weight: bold; }
-        .error { color: red; font-weight: bold; }
+/* You may want to adjust the result container to be slightly transparent, 
+   but keeping it opaque often helps with readability of detailed results. */
+#result-container { 
+    margin-top: 20px; 
+    padding: 15px; 
+    border: 1px solid #ccc; 
+    /* The original was #f9f9f9 (light gray). If you want black text in the container, 
+       keep the background light. If you want white text, change it to a dark color. 
+       Let's assume you want the text in the RESULTS box to remain black for clarity: */
+    background-color: #f9f9f9; 
+}
+/* This resets the text color for the content inside the #result-container back to black */
+#result-container * {
+    color: #000000;
+}
+.success { color: green; font-weight: bold; }
+.error { color: red; font-weight: bold; }
