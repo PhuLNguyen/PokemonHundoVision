@@ -28,17 +28,18 @@ def extract_cp_and_name(ocr_result):
         pokemon_name = match.group(1).strip()
         
         # Additional cleaning for potential leading/trailing noise in the name
-        final_name = re.sub(r'[^a-zA-Z\s]', '', pokemon_name).strip()
-        
-        # Filter common non-name leading characters (like the 'e' from "e Dialga")
-        if len(final_name) > 1 and final_name.lower().startswith('e '):
-             final_name = final_name[2:]
+        pokemon_name = re.sub(r'[^a-zA-Z\s]', '', pokemon_name).strip()
+
+        # Removes leading character(s) with a space those are not a part of Pokemon name
+        tokens = pokemon_name.split()
+        if len(tokens) > 1:
+            pokemon_name = tokens[-1]
              
         # Extract the CP (Group 2) and convert to an integer
         combat_power_str = match.group(2)
         combat_power_int = int(combat_power_str)
         
-        return final_name, combat_power_int
+        return pokemon_name, combat_power_int
     
     # Return failure if the pattern wasn't found
     return None, None
