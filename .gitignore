@@ -25,3 +25,5 @@ terraform.tfstate.backup
 .terraform/providers/registry.terraform.io/hashicorp/google/7.12.0/linux_amd64/terraform-provider-google_v7.12.0_x5
 .terraform/providers/registry.terraform.io/hashicorp/google-beta/6.50.0/linux_amd64/terraform-provider-google-beta_v6.50.0_x5
 .terraform/providers/registry.terraform.io/hashicorp/google-beta/6.50.0/linux_amd64/LICENSE.txt
+__pycache__/postprocessing.cpython-310.pyc
+__pycache__/preprocessing.cpython-310.pyc
