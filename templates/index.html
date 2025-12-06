@@ -7,23 +7,27 @@
 </head>
 <body>
     <h1>Upload a screenshot to check for Hundo</h1>
-    <p>This page is served by Flask.</p>
-    <p>Allowed file types: 'png', 'jpg', 'jpeg', 'webp'</p>
+    <div class="page-content-wrapper">
+        <div class="left-column">
+            <p>Allowed file types: 'png', 'jpg', 'jpeg', 'webp'</p>
 
-    <form id="upload-form" action="/upload" method="post" enctype="multipart/form-data">
-        <input type="file" name="image" id="image-input" accept="image/*" required>
-        <button type="submit" id="submit-button">Perform OCR</button>
-    </form>
-    
-    <div id="image-preview-container">
-        <h2>Image Preview</h2>
-        <img id="uploaded-image" src="#" alt="Image preview will appear here" style="max-width: 100%; height: auto; display: none; border: 1px solid #ccc; padding: 5px;">
-        <p id="preview-text">No image selected.</p>
-    </div>
-
-    <div id="result-container">
-        <h2>Results</h2>
-        <p>Upload an image to see the Pokémon Hundo check result here.</p>
+            <form id="upload-form" action="/upload" method="post" enctype="multipart/form-data">
+                <input type="file" name="image" id="image-input" accept="image/*" required>
+                <button type="submit" id="submit-button">Perform OCR</button>
+            </form>
+            
+            <div id="result-container">
+                <h2>Results</h2>
+                <p>Upload an image to see the Pokémon Hundo check result here.</p>
+            </div>
+        </div> 
+        <div class="right-column">
+            <div id="image-preview-container">
+                <h2>Image Preview</h2>
+                <img id="uploaded-image" src="#" alt="Image preview will appear here" style="max-width: 100%; height: auto; display: none; border: 1px solid #ccc; padding: 5px;">
+                <p id="preview-text">No image selected.</p>
+            </div>
+        </div>
     </div>
 
     <script>

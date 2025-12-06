@@ -1,44 +1,60 @@
+h1 {text-align: center;}
 body {
 	font-family: Arial, sans-serif;
 	margin: 20px;
 	
-	/* 1. Specify the image file AND ADD AN OVERLAY */
-	/* We use a linear-gradient that goes from transparent black to transparent black. 
-       The 'rgba(0, 0, 0, 0.5)' adds a 50% opaque black layer over the image. */
+	/* The linear gradient overlay and image setup from before */
 	background-image: 
         linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
         url('../images/faded_gallery-OfdOEdGYiuk-unsplash.jpg');
 	
-	/* --- NEW: Change default text color to white for contrast --- */
 	color: #ffffff; 
-
-	/* 2. Control how the image repeats */
 	background-repeat: no-repeat;
-	
-	/* 3. Control image size/scaling */
 	background-size: cover; 
-	
-	/* 4. Control image position (center is usually a good default) */
 	background-position: center; 
-	
-	/* 5. Control if the image scrolls with content */
 	background-attachment: fixed;
 }
 
-/* You may want to adjust the result container to be slightly transparent, 
-   but keeping it opaque often helps with readability of detailed results. */
+/* --- NEW: Two-Column Layout Styling --- */
+.page-content-wrapper {
+    display: flex; /* Enable Flexbox for the container */
+    flex-wrap: wrap; /* Allow columns to stack on smaller screens */
+    gap: 30px; /* Space between the two columns */
+    margin: 0 auto; /* Center the wrapper */
+    max-width: 1200px; /* Limit total width */
+    padding: 20px;
+}
+
+.left-column {
+    flex: 1 1 50%; /* Growable, shrinkable, starts at 50% width */
+    min-width: 300px; /* Ensures column doesn't get too narrow */
+    order: 1; /* Keep it on the left */
+}
+
+.right-column {
+    flex: 1 1 40%; /* Slightly smaller, more flexible starting width */
+    min-width: 250px; /* Ensures column doesn't get too narrow */
+    order: 2; /* Keep it on the right */
+}
+
+/* --- Ensure elements inside are readable --- */
+
 #result-container { 
     margin-top: 20px; 
     padding: 15px; 
     border: 1px solid #ccc; 
-    /* The original was #f9f9f9 (light gray). If you want black text in the container, 
-       keep the background light. If you want white text, change it to a dark color. 
-       Let's assume you want the text in the RESULTS box to remain black for clarity: */
     background-color: #f9f9f9; 
 }
-/* This resets the text color for the content inside the #result-container back to black */
+
 #result-container * {
-    color: #000000;
-}*/
-.success { color: green !important; font-weight: bold; }
-.error { color: red !important; font-weight: bold; }
+    color: #000000; /* Text inside result container is black */
+}
+
+.success { 
+    color: green !important; 
+    font-weight: bold; 
+}
+.error { 
+    color: red !important; 
+    font-weight: bold; 
+}
