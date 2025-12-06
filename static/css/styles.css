@@ -39,6 +39,6 @@ body {
 /* This resets the text color for the content inside the #result-container back to black */
 #result-container * {
     color: #000000;
-}
-.success { color: green; font-weight: bold; }
-.error { color: red; font-weight: bold; }
+}*/
+.success { color: green !important; font-weight: bold; }
+.error { color: red !important; font-weight: bold; }
