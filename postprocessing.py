@@ -21,7 +21,7 @@ def extract_cp_and_name(ocr_result):
     # Group 2: (\d+): The Combat Power number (one or more digits)
     
     # It looks for: NAME, followed by optional spaces, then 'CP' or 'CF', optional spaces, then the NUMBER.
-    match = re.search(r'([a-zA-Z\s]+?)\s*(?:CP|CF)\s*(\d+)', cleaned_text, re.IGNORECASE)
+    match = re.search(r'([a-zA-Z\s]+?)\s*(?:CP|CF|cp|cf|ce|CE)\s*(\d+)', cleaned_text, re.IGNORECASE)
 
     if match:
         # Extract the Name (Group 1)
