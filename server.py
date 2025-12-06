@@ -2,7 +2,6 @@ import json
 import os 
 from flask import Flask, request, jsonify, render_template, send_file
 from google.cloud import vision, firestore
-from preprocessing import detect_dark_oval_banner
 from postprocessing import extract_cp_and_name
 
 # -------------------------------------------------------------
@@ -29,16 +28,24 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-def detect_text_from_bytes(image_bytes):
-    """Performs document text detection (OCR) on the image bytes."""
+def read_image(image_file):
+    """Performs document text detection (OCR)"""
+    content = image_file.read()
     
-    image = vision.Image(content=image_bytes)
+    image = vision.Image(content=content)
+    feature = vision.Feature(type_=vision.Feature.Type.TEXT_DETECTION)
+    request = vision.AnnotateImageRequest(
+        image=image,
+        features=[feature],
+    )
 
-    # Use DOCUMENT_TEXT_DETECTION for dense, multi-block text
-    response = vision_client.document_text_detection(image=image)
+    response = vision_client.annotate_image(request=request)
+    texts = response.text_annotations
     
-    if response.full_text_annotation and response.full_text_annotation.text:
-        return response.full_text_annotation.text
+    if texts:
+        # The first annotation contains the full text detected in the image
+        return texts[0].description
+    
     return "No text detected."
 
 def init_db():
@@ -95,21 +102,19 @@ def upload_file():
     if 'image' not in request.files:
         return jsonify({"error": "No file part in the request"}), 400
     
-    file = request.files['image']
+    image_file = request.files['image']
     
-    if file.filename == '':
+    if image_file.filename == '':
         return jsonify({"error": "No selected file"}), 400
     
-    if file and allowed_file(file.filename):
+    if image_file and allowed_file(image_file.filename):
         try:
-            banner_img = detect_dark_oval_banner(file)
-
             # uncomment line below to send image to server
             # also must uncomment block in preprocessing.py
             #return send_file(banner_img, mimetype='image/jpeg')
 
             # Process the image using OCR
-            ocr_text = detect_text_from_bytes(banner_img)
+            ocr_text = read_image(image_file)
 
             print(f"Vision API result: {ocr_text}")
 
@@ -147,7 +152,7 @@ def upload_file():
                     "Extracted Pokémon Name": name,
                     "Extracted Combat Power (CP)": cp,
                     "HUNDO?": "Yes" if pokemon_lvl else "No",
-                    "100% IV Level": pokemon_lvl
+                    "Pokemon Level": pokemon_lvl
                 }), 200
             else:
                 return jsonify({

@@ -17,7 +17,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the server.py file, static, and templates directory into the container
-COPY server.py postprocessing.py preprocessing.py /app/
+COPY server.py postprocessing.py /app/
 COPY static /app/static
 COPY templates /app/templates
 
