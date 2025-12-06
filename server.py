@@ -109,9 +109,9 @@ def upload_file():
     
     if image_file and allowed_file(image_file.filename):
         try:
-            # uncomment line below to send image to server
-            # also must uncomment block in preprocessing.py
-            #return send_file(banner_img, mimetype='image/jpeg')
+            name = None
+            cp = None
+            pokemon_lvl = None
 
             # Process the image using OCR
             ocr_text = read_image(image_file)
@@ -124,41 +124,33 @@ def upload_file():
 
             print(f"Extracted name and cp: {name}, CP: {cp}")
 
-            if name_lowercase and cp:
-                pokemon_lvl = None
+            # Create the query: Select documents where 'name' equals the pokemon name
+            # .limit(1) ensures the query stops after finding the first match
+            query = hundodata_collection.where(u'name', u'==', name_lowercase).limit(1)
 
-                # Create the query: Select documents where 'name' equals the pokemon name
-                # .limit(1) ensures the query stops after finding the first match
-                query = hundodata_collection.where(u'name', u'==', name_lowercase).limit(1)
+            # Execute the query
+            # The .get() method returns a list of DocumentSnapshot objects
+            results = query.get()
 
-                # Execute the query
-                # The .get() method returns a list of DocumentSnapshot objects
-                results = query.get()
+            if results:
+                # Access the first doc in the list
+                doc = results[0]
+                print("Docs: ", doc)
+                pokemon_hundo_dict = doc.to_dict()
+                print("Pokemon dict: ", pokemon_hundo_dict)
+                cp = str(cp)
+                if cp in pokemon_hundo_dict:
+                    pokemon_lvl = pokemon_hundo_dict[cp]       
+                    print("Pokemon lvl: ", pokemon_lvl)         
 
-                if results:
-                    # Access the first doc in the list
-                    doc = results[0]
-                    print("Docs: ", doc)
-                    pokemon_hundo_dict = doc.to_dict()
-                    print("Pokemon dict: ", pokemon_hundo_dict)
-                    cp = str(cp)
-                    if cp in pokemon_hundo_dict:
-                        pokemon_lvl = pokemon_hundo_dict[cp]       
-                        print("Pokemon lvl: ", pokemon_lvl)         
-
-                # Return the detected text as a JSON response
-                return jsonify({
-                    "Vision API result": ocr_text,
-                    "Extracted Pokémon Name": name,
-                    "Extracted Combat Power (CP)": cp,
-                    "HUNDO?": "Yes" if pokemon_lvl else "No",
-                    "Pokemon Level": pokemon_lvl
-                }), 200
-            else:
-                return jsonify({
-                    "Vision API result": ocr_text,
-                    "error": "Could not extract Pokémon name and CP from the image."
-                }), 422
+            # Return the detected text as a JSON response
+            return jsonify({
+                "Vision API result": ocr_text,
+                "Extracted Pokémon Name": name,
+                "Extracted Combat Power (CP)": cp,
+                "HUNDO?": "Yes" if pokemon_lvl else "No",
+                "Pokemon Level": pokemon_lvl
+            }), 200
         except Exception as e:
             print(f"An error occurred: {e}")
             return jsonify({"error": f"{e}"}), 500
