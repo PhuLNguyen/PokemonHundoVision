@@ -62,11 +62,11 @@ form.addEventListener('submit', async function(event) {
 				: `<span class="error">${data['HUNDO?']}</span>`;
 
 			resultContainer.innerHTML = `
-				<h2>OCR Success!</h2>
-				<p><strong>Extracted Pokémon:</strong> ${data['Extracted Pokémon Name']}</p>
-				<p><strong>Extracted CP:</strong> ${data['Extracted Combat Power (CP)']}</p>
-				<p><strong>100% IV (HUNDO)?</strong> ${hundoText}</p>
-				${isHundo ? `<p><strong>Pokemon Level:</strong> ${data['Pokemon Level']}</p>` : ''}
+				<h2 class="success">OCR Success!</h2>
+				<p>Extracted Pokémon: <strong>${data['Extracted Pokémon Name']}</strong></p>
+				<p>Extracted CP: <strong>${data['Extracted Combat Power (CP)']}</strong></p>
+				<p>100% IV (HUNDO)? <strong>${hundoText}</strong></p>
+				${isHundo ? `<p>Pokemon Level: <strong>${data['Pokemon Level']}</strong></p>` : ''}
 				<hr>
 				<details>
 					<summary>Vision API Raw Result</summary>

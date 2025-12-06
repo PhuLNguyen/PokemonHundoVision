@@ -120,16 +120,16 @@ def upload_file():
 
             # Extract Pokémon name and CP from the OCR result
             name, cp = extract_cp_and_name(ocr_text)
-            name = name.lower() if name else name
+            name_lowercase = name.lower() if name else name
 
             print(f"Extracted name and cp: {name}, CP: {cp}")
 
-            if name and cp:
+            if name_lowercase and cp:
                 pokemon_lvl = None
 
                 # Create the query: Select documents where 'name' equals the pokemon name
                 # .limit(1) ensures the query stops after finding the first match
-                query = hundodata_collection.where(u'name', u'==', name).limit(1)
+                query = hundodata_collection.where(u'name', u'==', name_lowercase).limit(1)
 
                 # Execute the query
                 # The .get() method returns a list of DocumentSnapshot objects
