@@ -22,7 +22,7 @@ COPY static /app/static
 COPY templates /app/templates
 
 # Copy pokemon data to container
-COPY pokemon-data/hundo-data.jsonl /app/
+COPY pokemon-data/hundo-data.jsonl /app/pokemon-data/
 
 # Set environment variables
 # Set the port the application listens on (as defined in server.py)

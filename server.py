@@ -42,7 +42,7 @@ def detect_text_from_bytes(image_bytes):
     return "No text detected."
 
 def init_db():
-    data_filename = "hundo-data.jsonl"
+    data_filename = "./pokemon-data/hundo-data.jsonl"
     documents_to_insert = []
 
     # Check if the collection exist and has any data
@@ -165,4 +165,5 @@ def upload_file():
 # python3 server.py
 #-------------------------------------------------------------
 if __name__ == '__main__':
+    init_db()
     app.run(debug=True, host='0.0.0.0', port=PORT)
