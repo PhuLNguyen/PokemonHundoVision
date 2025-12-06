@@ -20,8 +20,8 @@ def extract_cp_and_name(ocr_result):
     # Group 1: ([a-zA-Z\s]+?): The Pokémon Name (letters and spaces, non-greedy)
     # Group 2: (\d+): The Combat Power number (one or more digits)
     
-    # It looks for: NAME, followed by optional spaces, then 'CP', optional spaces, then the NUMBER.
-    match = re.search(r'([a-zA-Z\s]+?)\s*CP\s*(\d+)', cleaned_text, re.IGNORECASE)
+    # It looks for: NAME, followed by optional spaces, then 'CP' or 'CF', optional spaces, then the NUMBER.
+    match = re.search(r'([a-zA-Z\s]+?)\s*(?:CP|CF)\s*(\d+)', cleaned_text, re.IGNORECASE)
 
     if match:
         # Extract the Name (Group 1)
