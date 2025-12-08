@@ -120,6 +120,13 @@ gcloud builds submit --config=cloudbuild.yaml
 
 ---
 
+## Load test 
+- 5 user, 500 requests
+```bash
+pip3 install httpx pandas matplotlib
+python3 load_test.py
+```
+
 ## Clean Up
 
 ```bash
